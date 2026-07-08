@@ -76,9 +76,7 @@ public class PEV2EditorPart extends MultiPageEditorPart {
 
     browser = new Browser(container, SWT.NONE);
 
-    if (Boolean.getBoolean("pev2.test")) {
-      createTestHooks();
-    }
+    createTestHooks();
 
     browser.setUrl(fileUrl.toExternalForm());
     browser.addProgressListener(ProgressListener.completedAdapter(e -> browser.execute("""
