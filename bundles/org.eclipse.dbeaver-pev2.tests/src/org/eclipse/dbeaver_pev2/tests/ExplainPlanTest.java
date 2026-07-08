@@ -8,9 +8,11 @@ import java.nio.file.Files;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.dbeaver_pev2.PEV2EditorPart;
 import org.eclipse.dbeaver_pev2.PEV2TestHook;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -30,6 +32,7 @@ public class ExplainPlanTest extends AbstractSWTBotTest {
         }
         tempFile.deleteOnExit();
 
+        final boolean[] editorOpened = {false};
         Display.getDefault().syncExec(() -> {
             try {
                 IWorkbenchPage page = PlatformUI.getWorkbench()
@@ -37,10 +40,13 @@ public class ExplainPlanTest extends AbstractSWTBotTest {
                 IFileStore fileStore = EFS.getLocalFileSystem()
                     .getStore(tempFile.toURI());
                 IDE.openEditorOnFileStore(page, fileStore);
+                IEditorPart editor = page.getActiveEditor();
+                editorOpened[0] = editor instanceof PEV2EditorPart;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
+        assertTrue("PEV2 editor should have opened", editorOpened[0]);
 
         bot.waitUntil(new DefaultCondition() {
             @Override
@@ -50,7 +56,7 @@ public class ExplainPlanTest extends AbstractSWTBotTest {
 
             @Override
             public String getFailureMessage() {
-                return "PEV2 editor not opened or pev2.html not loaded";
+                return "pev2.html not loaded in PEV2 editor";
             }
         });
 
