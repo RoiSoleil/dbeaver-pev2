@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: DBeaver PEV2 SWTBot Tests
+Bundle-SymbolicName: org.eclipse.dbeaver-pev2.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Require-Bundle: org.eclipse.swtbot.swt.finder,
+ org.eclipse.swtbot.eclipse.finder,
+ org.junit,
+ org.jkiss.dbeaver.ui,
+ org.jkiss.dbeaver.model,
+ org.jkiss.dbeaver.ext.postgresql,
+ org.eclipse.dbeaver-pev2
+Automatic-Module-Name: org.eclipse.dbeaver-pev2.tests

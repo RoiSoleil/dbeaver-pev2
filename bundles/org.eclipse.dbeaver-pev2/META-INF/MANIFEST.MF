@@ -13,6 +13,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.jkiss.dbeaver.ui.editors.sql,
  org.jkiss.dbeaver.ext.postgresql
+Export-Package: org.eclipse.dbeaver_pev2
 Automatic-Module-Name: org.eclipse.dbeaver-pev2
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
