@@ -80,17 +80,12 @@ public class PEV2EditorPart extends MultiPageEditorPart {
       createTestHooks();
     }
 
-    browser.addProgressListener(ProgressListener.completedAdapter(e -> {
-      if (Boolean.getBoolean("pev2.test")) {
-        pev2Loaded = true;
-      }
-      browser.execute("""
-          window.setPlanData('%s', `%s`, `%s`);
-          """.formatted(getEditorInput().getName(),
-          pev2Content.plan(),
-          pev2Content.sql()));
-    }));
     browser.setUrl(fileUrl.toExternalForm());
+    browser.addProgressListener(ProgressListener.completedAdapter(e -> browser.execute("""
+        window.setPlanData('%s', `%s`, `%s`);
+        """.formatted(getEditorInput().getName(),
+        pev2Content.plan(),
+        pev2Content.sql()))));
 
     int index = addPage(container);
     setPageText(index, "Plan");
