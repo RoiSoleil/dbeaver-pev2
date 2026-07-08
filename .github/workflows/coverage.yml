@@ -7,8 +7,22 @@ on:
 permissions:
   contents: write
 jobs:
-  build:
+   build:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: dbeaver_test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
     - uses: actions/checkout@v5
     - name: Set up JDK 21
@@ -23,6 +37,11 @@ jobs:
         maven-version: 3.9.11
     - name: Install WebKit for SWT Browser
       run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev
+    - name: Initialize test database
+      run: |
+        sudo apt-get install -y postgresql-client
+        PGPASSWORD=test psql -h localhost -U test -d dbeaver_test \
+          -f bundles/org.eclipse.dbeaver-pev2.tests/schema.sql
     - name: Build with Coverage
       run: |-
         Xvfb :99 -screen 0 1920x1080x24 &
