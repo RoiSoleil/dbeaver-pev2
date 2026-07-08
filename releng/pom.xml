@@ -76,7 +76,6 @@
 				<configuration>
 					<useUIHarness>true</useUIHarness>
 					<useUIThread>true</useUIThread>
-					<product>org.jkiss.dbeaver.core.product</product>
 					<argLine>-Xmx4g -Djava.awt.headless=false -Dorg.eclipse.swtbot.search.timeout=30000</argLine>
 				</configuration>
 			</plugin>
