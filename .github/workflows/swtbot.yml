@@ -40,6 +40,8 @@ jobs:
       run: |-
         PGPASSWORD=test psql -h localhost -U test -d dbeaver_test \
           -f bundles/org.eclipse.dbeaver-pev2.tests/schema.sql
+    - name: Install WebKit for SWT Browser
+      run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev
     - name: Set up cache
       uses: actions/cache@v4.2.4
       with:
