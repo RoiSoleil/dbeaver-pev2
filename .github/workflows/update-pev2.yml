@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      PEV2_FILE: plugins/com.xxx.dbpev2/src/pev2.html
-      PEV2_URL: https://raw.githubusercontent.com/sosedoff/pev2/master/pev2.html
+      PEV2_FILE: bundles/org.eclipse.dbeaver-pev2/pev2.html
+      PEV2_URL: https://www.github.com/dalibo/pev2/releases/latest/download/pev2.html
 
     steps:
       - name: Checkout
@@ -30,7 +30,9 @@ jobs:
         shell: bash
         run: |
           extract_version() {
-            grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' "$1" | head -1
+                    grep -Eo 'n=`[0-9]+\.[0-9]+\.[0-9]+`' "$1" \
+                      | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' \
+                      | head -1
           }
 
           CURRENT=$(extract_version "$PEV2_FILE")
