@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <feature id="org.eclipse.dbeaver-pev2.feature">
-      <category name="org.eclipse.dbeaver-pev2"/>
-   </feature>
-   <category-def name="org.eclipse.dbeaver-pev2" label="DBeaver PEV2"/>
-</site>
