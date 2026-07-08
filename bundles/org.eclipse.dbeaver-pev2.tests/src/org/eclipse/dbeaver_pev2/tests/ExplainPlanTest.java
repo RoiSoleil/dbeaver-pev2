@@ -27,28 +27,12 @@ public class ExplainPlanTest extends AbstractSWTBotTest {
         bot.waitUntil(new DefaultCondition() {
             @Override
             public boolean test() throws Exception {
-                try {
-                    return bot.editorByTitle(".*pev2.*") != null;
-                } catch (Exception e) {
-                    return false;
-                }
-            }
-
-            @Override
-            public String getFailureMessage() {
-                return "PEV2 editor not opened";
-            }
-        });
-
-        bot.waitUntil(new DefaultCondition() {
-            @Override
-            public boolean test() throws Exception {
                 return PEV2TestHook.isLoaded();
             }
 
             @Override
             public String getFailureMessage() {
-                return "pev2.html not loaded";
+                return "PEV2 editor not opened or pev2.html not loaded";
             }
         });
 
