@@ -114,7 +114,7 @@
 						<groupId>org.eclipse.tycho</groupId>
 						<artifactId>tycho-surefire-plugin</artifactId>
 						<configuration>
-							<argLine>-javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/runtime/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${project.build.directory}/jacoco.exec -Xmx4g -Djava.awt.headless=false -Dorg.eclipse.swtbot.search.timeout=30000</argLine>
+							<argLine>-javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${project.build.directory}/jacoco.exec -Xmx4g -Djava.awt.headless=false -Dorg.eclipse.swtbot.search.timeout=30000</argLine>
 						</configuration>
 					</plugin>
 				</plugins>
