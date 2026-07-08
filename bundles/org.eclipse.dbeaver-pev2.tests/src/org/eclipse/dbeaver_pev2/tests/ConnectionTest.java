@@ -12,6 +12,7 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.ide.IDE;
 import org.junit.Test;
 
@@ -36,7 +37,9 @@ public class ConnectionTest extends AbstractSWTBotTest {
                     .getActiveWorkbenchWindow().getActivePage();
                 IFileStore fileStore = EFS.getLocalFileSystem()
                     .getStore(tempFile.toURI());
-                IDE.openEditorOnFileStore(page, fileStore);
+                IDE.openEditor(page,
+                    new FileStoreEditorInput(fileStore),
+                    "org.eclipse.dbeaver_pev2.PEV2Editor");
                 opened[0] = true;
             } catch (Exception e) {
                 throw new RuntimeException(e);

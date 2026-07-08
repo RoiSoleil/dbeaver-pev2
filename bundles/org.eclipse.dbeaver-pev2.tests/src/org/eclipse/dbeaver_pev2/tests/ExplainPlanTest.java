@@ -15,6 +15,7 @@ import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.ide.IDE;
 import org.junit.Test;
 
@@ -39,7 +40,8 @@ public class ExplainPlanTest extends AbstractSWTBotTest {
                     .getActiveWorkbenchWindow().getActivePage();
                 IFileStore fileStore = EFS.getLocalFileSystem()
                     .getStore(tempFile.toURI());
-                IDE.openEditor(page, fileStore,
+                IDE.openEditor(page,
+                    new FileStoreEditorInput(fileStore),
                     "org.eclipse.dbeaver_pev2.PEV2Editor");
                 IEditorPart editor = page.getActiveEditor();
                 editorOpened[0] = editor instanceof PEV2EditorPart;
