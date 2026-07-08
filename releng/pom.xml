@@ -76,7 +76,7 @@
 				<configuration>
 					<useUIHarness>true</useUIHarness>
 					<useUIThread>true</useUIThread>
-					<argLine>-Xmx4g -Djava.awt.headless=false -Dorg.eclipse.swtbot.search.timeout=30000</argLine>
+					<argLine>-Xmx4g -Djava.awt.headless=false -Dorg.eclipse.swtbot.search.timeout=30000 -Dpev2.test=true</argLine>
 				</configuration>
 			</plugin>
 		</plugins>
