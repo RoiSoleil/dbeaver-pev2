@@ -5,6 +5,15 @@ import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 public class PostgreSQLConnectionHelper {
 
     public static void createConnection(SWTWorkbenchBot bot) {
+        for (int i = 0; i < 10; i++) {
+            try {
+                bot.menu("Database");
+                break;
+            } catch (Exception e) {
+                bot.sleep(2000);
+            }
+        }
+
         bot.menu("Database")
            .menu("New Database Connection")
            .click();
