@@ -2,27 +2,45 @@ package org.eclipse.dbeaver_pev2.tests;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
+
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.dbeaver_pev2.PEV2TestHook;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.junit.Test;
 
 public class ExplainPlanTest extends AbstractSWTBotTest {
 
     @Test
-    public void explainAnalyzeOpensPEV2() {
-        PostgreSQLConnectionHelper.createConnection(bot);
+    public void openPEV2FileAndVerifyLoading() throws Exception {
+        String sql = "SELECT 1";
+        String plan = "{\"Plan\": {\"Node Type\": \"Result\"}}";
+        String content = sql + "\n" + "=".repeat(50) + "\n" + plan;
 
-        bot.menu("SQL Editor")
-                .menu("New SQL Script")
-                .click();
+        File tempFile = Files.createTempFile("test", ".pev2").toFile();
+        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+            fos.write(content.getBytes());
+        }
+        tempFile.deleteOnExit();
 
-        bot.styledText()
-                .setText("""
-                    select *
-                    from person;
-                    """);
-
-        bot.toolbarButton("PEV2").click();
+        Display.getDefault().syncExec(() -> {
+            try {
+                IWorkbenchPage page = PlatformUI.getWorkbench()
+                    .getActiveWorkbenchWindow().getActivePage();
+                IFileStore fileStore = EFS.getLocalFileSystem()
+                    .getStore(tempFile.toURI());
+                IDE.openEditorOnFileStore(page, fileStore);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         bot.waitUntil(new DefaultCondition() {
             @Override

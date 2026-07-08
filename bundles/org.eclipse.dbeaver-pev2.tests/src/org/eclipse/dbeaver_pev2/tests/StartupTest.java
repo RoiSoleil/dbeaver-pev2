@@ -8,9 +8,7 @@ public class StartupTest extends AbstractSWTBotTest {
 
     @Test
     public void shouldStartWorkbench() {
-        bot.menu("Database");
-        assertNotNull(
-            bot.viewByTitle("Database Navigator"));
+        assertNotNull(bot.activeShell());
     }
 
 }

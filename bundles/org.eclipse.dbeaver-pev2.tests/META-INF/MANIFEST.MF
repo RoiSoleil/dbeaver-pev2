@@ -7,10 +7,10 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.eclipse.swtbot.swt.finder,
  org.eclipse.swtbot.eclipse.finder,
  org.junit,
- org.jkiss.dbeaver.ui,
- org.jkiss.dbeaver.model,
- org.jkiss.dbeaver.ext.postgresql,
  org.eclipse.dbeaver-pev2,
  org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.ui.ide,
+ org.eclipse.core.runtime,
+ org.eclipse.core.filesystem,
+ org.eclipse.core.resources
 Automatic-Module-Name: org.eclipse.dbeaver-pev2.tests
