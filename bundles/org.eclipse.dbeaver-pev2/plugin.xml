@@ -20,7 +20,7 @@
           <command commandId="org.eclipse.dbeaver-pev2.open">
               <visibleWhen checkEnabled="true">
                 <with variable="activeEditor">
-                  <test property="org.eclipse.dbeaver-pev2.isPostgreDataSource"/>
+                  <test property="org.eclipse.dbeaver-pev2.isPostgreDataSource" forcePluginActivation="true"/>
                 </with>
               </visibleWhen>
           </command>

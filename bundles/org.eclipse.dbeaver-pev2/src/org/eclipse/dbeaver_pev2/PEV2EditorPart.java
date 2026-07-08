@@ -1,8 +1,9 @@
 package org.eclipse.dbeaver_pev2;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
@@ -16,13 +17,20 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.ProgressListener;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
@@ -40,6 +48,22 @@ public class PEV2EditorPart extends MultiPageEditorPart {
   protected void createPages() {
     createBrowserPage();
     createSourcePage();
+
+    createTabToolbar();
+  }
+
+  private void createTabToolbar() {
+    CTabFolder folder = (CTabFolder) getContainer();
+    ToolBar toolbar = new ToolBar(folder, SWT.FLAT);
+    ToolItem saveItem = new ToolItem(toolbar, SWT.PUSH);
+    saveItem.setImage(
+        PlatformUI.getWorkbench()
+                  .getSharedImages()
+                  .getImage(ISharedImages.IMG_ETOOL_SAVE_EDIT));
+
+    saveItem.setToolTipText("Save As...");
+    saveItem.addListener(SWT.Selection, e -> doSaveAs());
+    folder.setTopRight(toolbar, SWT.RIGHT);
   }
 
   private void createBrowserPage() {
@@ -86,6 +110,26 @@ public class PEV2EditorPart extends MultiPageEditorPart {
 
   @Override
   public void doSaveAs() {
+    Shell shell = getSite().getShell();
+
+    FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+
+    dialog.setText("Save PEV2 file");
+    dialog.setFileName(getEditorInput().getName());
+    dialog.setFilterExtensions("*.pev2");
+
+    String filename = dialog.open();
+
+    if (filename == null) {
+      return;
+    }
+
+    File file = new File(filename);
+    try (FileOutputStream fileOutputStream = new FileOutputStream(file); InputStream inputStream = getInputStream()) {
+      inputStream.transferTo(fileOutputStream);
+    } catch (IOException e) {
+      Activator.error(e);
+    }
   }
 
   @Override
@@ -109,7 +153,7 @@ public class PEV2EditorPart extends MultiPageEditorPart {
 
   @Override
   public boolean isSaveAsAllowed() {
-    return false;
+    return true;
   }
 
   private void readFile() throws PartInitException {
@@ -120,7 +164,7 @@ public class PEV2EditorPart extends MultiPageEditorPart {
     }
   }
 
-  private InputStream getInputStream() throws PartInitException, MalformedURLException, IOException {
+  private InputStream getInputStream() throws IOException {
     IEditorInput input = getEditorInput();
     URI uri = null;
     if (input instanceof IFileEditorInput fileInput) {
@@ -128,7 +172,7 @@ public class PEV2EditorPart extends MultiPageEditorPart {
     } else if (input instanceof IURIEditorInput uriInput) {
       uri = uriInput.getURI();
     } else {
-      throw new PartInitException("Unsupported editor input: " + input.getClass());
+      throw new IOException("Unsupported editor input: " + input.getClass());
     }
     return uri.toURL().openStream();
   }
