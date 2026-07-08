@@ -53,6 +53,7 @@ jobs:
         sleep 2
         export DISPLAY=:99
         mvn clean verify \
+          -Pswtbot-tests \
           -Dpev2.test=true \
           -Ddb.host=localhost \
           -Ddb.database=dbeaver_test \
