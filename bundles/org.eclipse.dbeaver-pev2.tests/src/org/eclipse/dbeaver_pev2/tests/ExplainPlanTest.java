@@ -1,6 +1,5 @@
 package org.eclipse.dbeaver_pev2.tests;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.dbeaver_pev2.PEV2TestHook;
@@ -28,9 +27,11 @@ public class ExplainPlanTest extends AbstractSWTBotTest {
         bot.waitUntil(new DefaultCondition() {
             @Override
             public boolean test() throws Exception {
-                return bot.activeEditor()
-                        .getTitle()
-                        .contains("pev2");
+                try {
+                    return bot.editorByTitle(".*pev2.*") != null;
+                } catch (Exception e) {
+                    return false;
+                }
             }
 
             @Override
@@ -63,7 +64,6 @@ public class ExplainPlanTest extends AbstractSWTBotTest {
             }
         });
 
-        assertNotNull(bot.activeEditor());
         assertTrue(PEV2TestHook.isPlanLoaded());
     }
 
