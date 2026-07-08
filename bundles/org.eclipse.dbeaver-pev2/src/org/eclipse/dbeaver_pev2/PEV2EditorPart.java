@@ -80,10 +80,9 @@ public class PEV2EditorPart extends MultiPageEditorPart {
       createTestHooks();
     }
 
-    browser.setUrl(fileUrl.toExternalForm());
     browser.addProgressListener(ProgressListener.completedAdapter(e -> {
       if (Boolean.getBoolean("pev2.test")) {
-        injectTestHooks();
+        pev2Loaded = true;
       }
       browser.execute("""
           window.setPlanData('%s', `%s`, `%s`);
@@ -91,6 +90,7 @@ public class PEV2EditorPart extends MultiPageEditorPart {
           pev2Content.plan(),
           pev2Content.sql()));
     }));
+    browser.setUrl(fileUrl.toExternalForm());
 
     int index = addPage(container);
     setPageText(index, "Plan");
