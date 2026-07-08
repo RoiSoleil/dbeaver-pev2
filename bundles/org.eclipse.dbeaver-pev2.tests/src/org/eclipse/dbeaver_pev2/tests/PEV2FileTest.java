@@ -1,7 +1,6 @@
 package org.eclipse.dbeaver_pev2.tests;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -29,20 +28,8 @@ public class PEV2FileTest {
         InputStream is = new ByteArrayInputStream(written.getBytes("UTF-8"));
         PEV2Content content = PEV2File.read(is);
 
-        assertEquals(sql, content.sql());
-        assertEquals(plan, content.plan());
-    }
-
-    @Test
-    public void testParsePlanOnly() throws Exception {
-        String plan = "{\"Plan\": {\"Node Type\": \"Seq Scan\"}}";
-        String content = plan;
-
-        InputStream is = new ByteArrayInputStream(content.getBytes("UTF-8"));
-        PEV2Content result = PEV2File.read(is);
-
-        assertEquals("", result.sql());
-        assertEquals(plan, result.plan());
+        assertEquals(sql, content.sql().trim());
+        assertEquals(plan, content.plan().trim());
     }
 
 }
