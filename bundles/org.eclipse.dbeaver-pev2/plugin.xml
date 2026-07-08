@@ -11,16 +11,16 @@
    <extension point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
              namespace="org.eclipse.dbeaver-pev2"
-             properties="isPostgreSQLConnection"
+             properties="isPostgreDataSource"
              type="org.jkiss.dbeaver.ui.editors.sql.SQLEditor"
-             class="org.eclipse.dbeaver_pev2.PostgreSQLConnectionPropertyTester"/>
+             class="org.eclipse.dbeaver_pev2.PostgreDataSourcePropertyTester"/>
    </extension>
    <extension point="org.eclipse.ui.menus">
       <menuContribution allPopups="false" locationURI="toolbar:org.jkiss.dbeaver.ui.editors.sql.toolbar.side.top?after=tools">
           <command commandId="org.eclipse.dbeaver-pev2.open">
               <visibleWhen checkEnabled="true">
                 <with variable="activeEditor">
-                  <test property="org.eclipse.dbeaver-pev2.isPostgreSQLConnection"/>
+                  <test property="org.eclipse.dbeaver-pev2.isPostgreDataSource"/>
                 </with>
               </visibleWhen>
           </command>
