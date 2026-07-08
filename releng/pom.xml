@@ -8,6 +8,7 @@
 	<properties>
 		<tycho.version>5.0.3</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jacoco.version>0.8.12</jacoco.version>
 		<eclipse-repo.url>https://download.eclipse.org/releases/latest</eclipse-repo.url>
 		<dbeaver-repo.url>https://dbeaver.io/update/latest</dbeaver-repo.url>
 	</properties>
@@ -29,6 +30,15 @@
 		</repository>
 	</repositories>
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${jacoco.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
@@ -82,4 +92,33 @@
 		</plugins>
 	</build>
 	<packaging>pom</packaging>
+
+	<profiles>
+		<profile>
+			<id>coverage</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>prepare-agent</id>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-surefire-plugin</artifactId>
+						<configuration>
+							<argLine>${jacoco.agent.argLine} -Xmx4g -Djava.awt.headless=false -Dorg.eclipse.swtbot.search.timeout=30000 -Dpev2.test=true</argLine>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
