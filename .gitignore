@@ -15,6 +15,12 @@
 log/
 target/
 
+# Eclipse build output
+bin/
+
+# SWTBot test artifacts
+screenshots/
+
 # Compiled class file
 *.class
 

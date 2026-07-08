@@ -14,4 +14,15 @@
 		<module>features/org.eclipse.dbeaver-pev2</module>
 		<module>update-site/org.eclipse.dbeaver-pev2</module>
 	</modules>
+
+	<profiles>
+		<profile>
+			<id>swtbot-tests</id>
+			<modules>
+				<module>bundles/org.eclipse.dbeaver-pev2.tests</module>
+				<module>features/org.eclipse.dbeaver-pev2.tests.feature</module>
+				<module>update-site/org.eclipse.dbeaver-pev2.tests.repository</module>
+			</modules>
+		</profile>
+	</profiles>
 </project>

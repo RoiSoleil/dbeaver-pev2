@@ -16,6 +16,7 @@ import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.BrowserFunction;
 import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.layout.FillLayout;
@@ -44,6 +45,9 @@ public class PEV2EditorPart extends MultiPageEditorPart {
 
   private PEV2Content pev2Content;
 
+  private volatile boolean pev2Loaded;
+  private volatile boolean planLoaded;
+
   @Override
   protected void createPages() {
     createBrowserPage();
@@ -70,7 +74,12 @@ public class PEV2EditorPart extends MultiPageEditorPart {
     Composite container = new Composite(getContainer(), SWT.NONE);
     container.setLayout(new FillLayout());
 
-    browser = new Browser(container, SWT.None);
+    browser = new Browser(container, SWT.NONE);
+
+    if (Boolean.getBoolean("pev2.test")) {
+      createTestHooks();
+    }
+
     browser.setUrl(fileUrl.toExternalForm());
     browser.addProgressListener(ProgressListener.completedAdapter(e -> browser.execute("""
         window.setPlanData('%s', `%s`, `%s`);
@@ -80,6 +89,37 @@ public class PEV2EditorPart extends MultiPageEditorPart {
 
     int index = addPage(container);
     setPageText(index, "Plan");
+  }
+
+  private void createTestHooks() {
+    new BrowserFunction(browser, "notifyPEV2Loaded") {
+      @Override
+      public Object function(Object[] arguments) {
+        pev2Loaded = true;
+        return null;
+      }
+    };
+    new BrowserFunction(browser, "notifyPlanLoaded") {
+      @Override
+      public Object function(Object[] arguments) {
+        planLoaded = true;
+        return null;
+      }
+    };
+  }
+
+  private void injectTestHooks() {
+    browser.execute("""
+        window.pev2Test = { loaded: false, planLoaded: false };
+        var orig = window.setPlanData;
+        window.setPlanData = function(e, t, r) {
+          orig(e, t, r);
+          window.pev2Test.planLoaded = true;
+          if (window.notifyPlanLoaded) window.notifyPlanLoaded();
+        };
+        window.pev2Test.loaded = true;
+        if (window.notifyPEV2Loaded) window.notifyPEV2Loaded();
+        """);
   }
 
   private void createSourcePage() {
@@ -179,6 +219,14 @@ public class PEV2EditorPart extends MultiPageEditorPart {
 
   @Override
   public void setFocus() {
+  }
+
+  public boolean isPEV2Loaded() {
+    return pev2Loaded;
+  }
+
+  public boolean isPlanLoaded() {
+    return planLoaded;
   }
 
 }
