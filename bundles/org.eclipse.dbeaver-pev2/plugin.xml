@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.eclipse.dbeaver-pev2.open"
+            name="Open explain plan in PEV2">
+      </command>
+   </extension>
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+             namespace="org.eclipse.dbeaver-pev2"
+             properties="isPostgreSQLConnection"
+             type="org.jkiss.dbeaver.ui.editors.sql.SQLEditor"
+             class="org.eclipse.dbeaver_pev2.PostgreSQLConnectionPropertyTester"/>
+   </extension>
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution allPopups="false" locationURI="toolbar:org.jkiss.dbeaver.ui.editors.sql.toolbar.side.top?after=tools">
+          <command commandId="org.eclipse.dbeaver-pev2.open">
+              <visibleWhen checkEnabled="true">
+                <with variable="activeEditor">
+                  <test property="org.eclipse.dbeaver-pev2.isPostgreSQLConnection"/>
+                </with>
+              </visibleWhen>
+          </command>
+      </menuContribution>
+   </extension>
+   <extension point="org.eclipse.ui.commandImages">
+        <image commandId="org.eclipse.dbeaver-pev2.open" icon="platform:/plugin/org.eclipse.dbeaver-pev2/icons/pev2.svg"/>
+   </extension>
+    <extension point="org.eclipse.ui.handlers">
+        <handler commandId="org.eclipse.dbeaver-pev2.open" class="org.eclipse.dbeaver_pev2.OpenPEV2Handler"/>
+   </extension>
+    <extension
+          point="org.eclipse.ui.editors">
+      <editor class="org.eclipse.dbeaver_pev2.PEV2EditorPart"
+        extensions="pev2" icon="platform:/plugin/org.eclipse.dbeaver-pev2/icons/pev2.png"
+        id="org.eclipse.dbeaver_pev2.PEV2Editor" name="PEV2 Editor">
+      </editor>
+    </extension>
+</plugin>

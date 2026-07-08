@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.dbeaver-pev2.feature"
+      label="DBeaver PEV2"
+      version="1.0.0.qualifier">
+
+   <description url="https://github.com/RoiSoleil/dbeaver-pev2">
+   A DBeaver plugin to visualize PostgreSQL explain plan with PEV2 (Dalibo)   
+   </description>
+
+   <license url="https://github.com/RoiSoleil/dbeaver-pev2/blob/main/LICENSE">
+   See : https://github.com/RoiSoleil/dbeaver-pev2/blob/main/LICENSE   
+   </license>
+
+   <plugin
+         id="org.eclipse.dbeaver-pev2"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
