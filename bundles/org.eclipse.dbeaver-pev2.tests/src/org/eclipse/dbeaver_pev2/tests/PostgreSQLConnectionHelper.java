@@ -1,15 +1,31 @@
 package org.eclipse.dbeaver_pev2.tests;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.ui.PlatformUI;
 
 public class PostgreSQLConnectionHelper {
 
     public static void createConnection(SWTWorkbenchBot bot) {
-        for (int i = 0; i < 10; i++) {
+        bot.sleep(8000);
+
+        Display.getDefault().syncExec(() -> {
+            try {
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                    .getActivePage().setPerspective(
+                        PlatformUI.getWorkbench().getPerspectiveRegistry()
+                            .findPerspectiveWithId("org.jkiss.dbeaver.core.perspective"));
+            } catch (Exception e) {
+                System.out.println("Perspective error: " + e.getMessage());
+            }
+        });
+        bot.sleep(5000);
+
+        for (int i = 0; i < 15; i++) {
             try {
                 bot.menu("Database");
                 break;
-            } catch (Exception e) {
+            } catch (Exception ex) {
                 bot.sleep(2000);
             }
         }
