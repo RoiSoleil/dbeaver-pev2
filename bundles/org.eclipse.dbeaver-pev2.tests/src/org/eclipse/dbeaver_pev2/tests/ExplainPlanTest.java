@@ -39,7 +39,8 @@ public class ExplainPlanTest extends AbstractSWTBotTest {
                     .getActiveWorkbenchWindow().getActivePage();
                 IFileStore fileStore = EFS.getLocalFileSystem()
                     .getStore(tempFile.toURI());
-                IDE.openEditorOnFileStore(page, fileStore);
+                IDE.openEditor(page, fileStore,
+                    "org.eclipse.dbeaver_pev2.PEV2Editor");
                 IEditorPart editor = page.getActiveEditor();
                 editorOpened[0] = editor instanceof PEV2EditorPart;
             } catch (Exception e) {
