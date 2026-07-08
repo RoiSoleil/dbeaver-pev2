@@ -1,0 +1,81 @@
+name: Check PEV2 update
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check-pev2:
+    runs-on: ubuntu-latest
+
+    env:
+      PEV2_FILE: plugins/com.xxx.dbpev2/src/pev2.html
+      PEV2_URL: https://raw.githubusercontent.com/sosedoff/pev2/master/pev2.html
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download upstream PEV2
+        run: |
+          curl -fsSL "$PEV2_URL" -o /tmp/pev2.html
+
+      - name: Extract versions
+        id: versions
+        shell: bash
+        run: |
+          extract_version() {
+            grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' "$1" | head -1
+          }
+
+          CURRENT=$(extract_version "$PEV2_FILE")
+          LATEST=$(extract_version /tmp/pev2.html)
+
+          echo "Current PEV2: $CURRENT"
+          echo "Latest PEV2:  $LATEST"
+
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
+
+      - name: Check if update needed
+        id: check
+        run: |
+          if [ "${{ steps.versions.outputs.current }}" = "${{ steps.versions.outputs.latest }}" ]; then
+            echo "PEV2 already up to date"
+            echo "update=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "New PEV2 version available"
+            echo "update=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update PEV2 file
+        if: steps.check.outputs.update == 'true'
+        run: |
+          cp /tmp/pev2.html "$PEV2_FILE"
+
+      - name: Create Pull Request
+        if: steps.check.outputs.update == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: update-pev2-${{ steps.versions.outputs.latest }}
+          delete-branch: true
+          commit-message: |
+            Update PEV2 to ${{ steps.versions.outputs.latest }}
+          title: |
+            Update embedded PEV2 ${{ steps.versions.outputs.current }} → ${{ steps.versions.outputs.latest }}
+          body: |
+            ## Automated PEV2 update
+
+            This PR updates the embedded PEV2 HTML.
+
+            | | Version |
+            |-|-|
+            | Current | `${{ steps.versions.outputs.current }}` |
+            | New | `${{ steps.versions.outputs.latest }}` |
+
+            Generated automatically by GitHub Actions.
