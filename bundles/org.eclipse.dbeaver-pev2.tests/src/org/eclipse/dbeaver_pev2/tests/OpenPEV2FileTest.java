@@ -66,6 +66,7 @@ public class OpenPEV2FileTest extends AbstractSWTBotTest {
         }
       }, 5000);
     });
+    assertNotNull(pev2EditorPart.getBrowser());
   }
 
 }
