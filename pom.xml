@@ -15,6 +15,14 @@
 		<module>update-site/org.eclipse.dbeaver-pev2</module>
 	</modules>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.dbeaver-pev2</groupId>
+      <artifactId>org.eclipse.dbeaver-pev2</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
 	<profiles>
 		<profile>
 			<id>coverage</id>
@@ -24,25 +32,6 @@
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
 						<executions>
-							<execution>
-								<id>merge-all</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>merge</goal>
-								</goals>
-								<inherited>false</inherited>
-								<configuration>
-									<fileSets>
-										<fileSet>
-											<directory>${project.basedir}</directory>
-											<includes>
-												<include>**/target/jacoco.exec</include>
-											</includes>
-										</fileSet>
-									</fileSets>
-									<destFile>${project.build.directory}/jacoco-all.exec</destFile>
-								</configuration>
-							</execution>
 							<execution>
                 <id>report-aggregate</id>
                 <phase>verify</phase>
