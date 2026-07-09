@@ -1,5 +1,6 @@
 package org.eclipse.dbeaver_pev2;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -77,30 +78,32 @@ public class Activator extends AbstractUIPlugin {
   public void start(BundleContext context) throws Exception {
     super.start(context);
     plugin = this;
-    IWorkbenchWindow window = PlatformUI.getWorkbench()
-                                        .getActiveWorkbenchWindow();
-    window.getPartService().addPartListener(new IPartListener2() {
+    Display.getDefault().syncExec(() -> {
+      IWorkbenchWindow window = PlatformUI.getWorkbench()
+                                          .getActiveWorkbenchWindow();
+      window.getPartService().addPartListener(new IPartListener2() {
 
-      @Override
-      public void partOpened(IWorkbenchPartReference partRef) {
-        if (partRef.getPart(false) instanceof SQLEditor editor) {
-          editor.addListener(listener);
+        @Override
+        public void partOpened(IWorkbenchPartReference partRef) {
+          if (partRef.getPart(false) instanceof SQLEditor editor) {
+            editor.addListener(listener);
+          }
         }
-      }
 
-      @Override
-      public void partActivated(IWorkbenchPartReference partRef) {
-        if (partRef.getPart(false) instanceof SQLEditor editor) {
-          editor.addListener(listener);
+        @Override
+        public void partActivated(IWorkbenchPartReference partRef) {
+          if (partRef.getPart(false) instanceof SQLEditor editor) {
+            editor.addListener(listener);
+          }
         }
-      }
 
-      @Override
-      public void partClosed(IWorkbenchPartReference partRef) {
-        if (partRef.getPart(false) instanceof SQLEditor editor) {
-          editor.removeListener(listener);
+        @Override
+        public void partClosed(IWorkbenchPartReference partRef) {
+          if (partRef.getPart(false) instanceof SQLEditor editor) {
+            editor.removeListener(listener);
+          }
         }
-      }
+      });
     });
   }
 

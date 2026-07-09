@@ -106,20 +106,6 @@ public class PEV2EditorPart extends MultiPageEditorPart {
     };
   }
 
-  private void injectTestHooks() {
-    browser.execute("""
-        window.pev2Test = { loaded: false, planLoaded: false };
-        var orig = window.setPlanData;
-        window.setPlanData = function(e, t, r) {
-          orig(e, t, r);
-          window.pev2Test.planLoaded = true;
-          if (window.notifyPlanLoaded) window.notifyPlanLoaded();
-        };
-        window.pev2Test.loaded = true;
-        if (window.notifyPEV2Loaded) window.notifyPEV2Loaded();
-        """);
-  }
-
   private void createSourcePage() {
     Composite container = new Composite(getContainer(), SWT.NONE);
     container.setLayout(new FillLayout());
@@ -227,4 +213,7 @@ public class PEV2EditorPart extends MultiPageEditorPart {
     return planLoaded;
   }
 
+  public Browser getBrowser() {
+    return browser;
+  }
 }
