@@ -19,18 +19,22 @@ public class IntegrationTest extends AbstractSWTBotTest {
 
         bot.sleep(5000);
 
-        SWTBotTree tree = bot.viewByTitle("Database Navigator").bot().tree();
+        SWTBotTree tree = bot.viewByTitle("Connections").bot().tree();
         SWTBotTreeItem connection = tree.getAllItems()[0];
-        connection.select();
+        connection.doubleClick();
+        bot.sleep(5000);
 
-        bot.menu("Navigate").menu("Open SQL Editor").click();
-        bot.sleep(3000);
+        // Gérer la popup de téléchargement du driver si elle apparaît
+        handleDriverDownload();
 
         bot.styledText(0).setText("EXPLAIN (FORMAT JSON) SELECT * FROM person");
         bot.sleep(1000);
 
         bot.toolbarButtonWithTooltip("Execute SQL Statement").click();
         bot.sleep(5000);
+
+        // Gérer la popup de téléchargement du driver si elle apparaît
+        handleDriverDownload();
 
         bot.toolbarButtonWithTooltip("Open explain plan in PEV2").click();
         bot.sleep(3000);
@@ -43,4 +47,19 @@ public class IntegrationTest extends AbstractSWTBotTest {
             editor instanceof PEV2EditorPart);
     }
 
+    private void handleDriverDownload() {
+        try {
+            bot.shell("Driver settings").activate();
+            bot.button("Download").click();
+            bot.sleep(15000);
+            try {
+                bot.shell("Driver settings").close();
+            } catch (Exception e) {
+                // Déjà fermée automatiquement
+            }
+            bot.sleep(3000);
+        } catch (Exception e) {
+            // Pas de popup de téléchargement, continuer
+        }
+    }
 }
