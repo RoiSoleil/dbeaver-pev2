@@ -11,6 +11,8 @@
 		<jacoco.version>0.8.15</jacoco.version>
 		<eclipse-repo.url>https://download.eclipse.org/releases/latest</eclipse-repo.url>
 		<dbeaver-repo.url>https://dbeaver.io/update/latest</dbeaver-repo.url>
+		<target.file>${maven.multiModuleProjectDirectory}/releng/dbeaver-pev2.target</target.file>
+		<localeArg>-Duser.language=en -Duser.country=US</localeArg>
 	</properties>
 	<repositories>
 		<repository>
@@ -65,6 +67,9 @@
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
+					<target>
+						<file>${target.file}</file>
+					</target>
 					<environments>
 						<environment>
 							<os>win32</os>
@@ -114,7 +119,7 @@
 						<groupId>org.eclipse.tycho</groupId>
 						<artifactId>tycho-surefire-plugin</artifactId>
 						<configuration>
-							<argLine>-javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${project.build.directory}/jacoco.exec -Xmx4g -Djava.awt.headless=false -Dorg.eclipse.swtbot.search.timeout=30000</argLine>
+							<argLine>${localeArg} -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${project.build.directory}/jacoco.exec -Xmx4g -Djava.awt.headless=false -Dorg.eclipse.swtbot.search.timeout=30000</argLine>
 						</configuration>
 					</plugin>
 			</plugins>
