@@ -7,8 +7,8 @@
             id="org.eclipse.dbeaver-pev2.open"
             name="Open explain plan in PEV2">
       </command>
-   </extension>
-   <extension point="org.eclipse.core.expressions.propertyTesters">
+    </extension>
+    <extension point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
       		 id="org.eclipse.dbeaver_pev2.PostgreDataSourcePropertyTester"
              namespace="org.eclipse.dbeaver-pev2"

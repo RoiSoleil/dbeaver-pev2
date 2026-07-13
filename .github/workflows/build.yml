@@ -1,62 +1,118 @@
 name: Build
+
 on:
-   push:
-      branches:
+  push:
+    branches:
       - main
+  pull_request:
+
 permissions:
-   contents: write
+  contents: write
+
 jobs:
-   build:
-      runs-on: ubuntu-latest
-      steps:
-      -  name: Checkout
-         uses: actions/checkout@v5
-      -  name: Set up JDK
-         uses: actions/setup-java@v5
-         with:
-            distribution: temurin
-            java-version: 21
-      -  name: Setup Maven
-         uses: stCarolas/setup-maven@v5
-         with:
-            maven-version: 3.9.11
-      -  name: Install WebKit for SWT Browser
-         run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev
-      -  name: Set up cache
-         uses: actions/cache@v4.2.4
-         with:
-            path: ~/.m2/repository
-            key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-            restore-keys: |
-              ${{ runner.os }}-maven-
-      -  name: Build
-         run: |-
-            Xvfb :99 -screen 0 1920x1080x24 &
-            sleep 2
-            export DISPLAY=:99
-            mvn clean install
-         shell: bash
-      -  name: Release
-         uses: "marvinpinto/action-automatic-releases@latest"
-         with:
-             repo_token: "${{ secrets.GITHUB_TOKEN }}"
-             automatic_release_tag: "latest"
-             prerelease: true
-             title: "Development Build"
-             files: |
-               ./update-site/org.eclipse.dbeaver-pev2/target/org.eclipse.dbeaver-pev2.updatesite-*-SNAPSHOT.zip
-      -  name: Publish p2 update site
-         env:
-            ACTIONS_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
-         run: |-
-            git clone --branch update-site https://github.com/RoiSoleil/dbeaver-pev2
-            cd dbeaver-pev2
-            cd latest
-            git config user.name "RoiSoleil"
-            git config user.email "helios.gilles@gmail.com"
-            rm -fr *
-            cp -r ../../update-site/org.eclipse.dbeaver-pev2/target/repository/* .
-            git add .
-            git commit -m "New version of the update site"
-            git push -f https://RoiSoleil:$ACTIONS_TOKEN@github.com/RoiSoleil/dbeaver-pev2 update-site
-         shell: bash
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Setup Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: 3.9.11
+
+      - name: Setup PostgreSQL
+        id: postgres
+        uses: ikalnytskyi/action-setup-postgres@v8
+        with:
+          postgres-version: "18"
+          database: dbeaver_test
+          username: test
+          password: test
+          port: "5432"
+
+      - name: Initialize test database
+        shell: powershell
+        env:
+          PGSERVICE: ${{ steps.postgres.outputs.service-name }}
+        run: |
+          psql `
+            --file="bundles/org.eclipse.dbeaver-pev2.tests/schema.sql" `
+            --set=ON_ERROR_STOP=1
+
+      - name: Verify PostgreSQL
+        shell: powershell
+        env:
+          PGSERVICE: ${{ steps.postgres.outputs.service-name }}
+        run: |
+          psql --command="SELECT current_database(), current_user, version();"
+
+      - name: Set up cache
+        uses: actions/cache@v4.2.4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build
+        shell: bash
+        run: |
+          mvn clean verify -Pcoverage \
+            -Ddb.host=localhost \
+            -Ddb.port=5432 \
+            -Ddb.database=dbeaver_test \
+            -Ddb.user=test \
+            -Ddb.password=test
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: target/site/jacoco-aggregate/jacoco.xml
+          verbose: true
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Release
+        if: github.event_name == 'push'
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: latest
+          prerelease: true
+          title: Development Build
+          files: |
+            ./update-site/org.eclipse.dbeaver-pev2/target/org.eclipse.dbeaver-pev2.updatesite-*-SNAPSHOT.zip
+
+      - name: Publish p2 update site
+        if: github.event_name == 'push'
+        shell: bash
+        env:
+          ACTIONS_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
+        run: |
+          git clone --branch update-site https://github.com/RoiSoleil/dbeaver-pev2
+          cd dbeaver-pev2/latest
+
+          git config user.name "RoiSoleil"
+          git config user.email "helios.gilles@gmail.com"
+
+          rm -rf ./*
+          cp -r ../../update-site/org.eclipse.dbeaver-pev2/target/repository/. .
+
+          git add .
+
+          if git diff --cached --quiet; then
+            echo "Aucune modification du site p2"
+            exit 0
+          fi
+
+          git commit -m "New version of the update site"
+          git push -f "https://RoiSoleil:${ACTIONS_TOKEN}@github.com/RoiSoleil/dbeaver-pev2" update-site
