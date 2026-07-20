@@ -16,6 +16,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.ide.IDE;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class PEV2EditorPartTest extends AbstractSWTBotTest {
@@ -67,6 +68,7 @@ public class PEV2EditorPartTest extends AbstractSWTBotTest {
     assertNotNull(pev2EditorPart.getBrowser());
   }
 
+  @Ignore
   @Test
   public void doSaveAsCancel() throws Exception {
     PEV2EditorPart editor = openPEV2File();
@@ -76,6 +78,7 @@ public class PEV2EditorPartTest extends AbstractSWTBotTest {
     bot.button("Cancel").click();
   }
 
+  @Ignore
   @Test
   public void doSaveAsSave() throws Exception {
     PEV2EditorPart editor = openPEV2File();

@@ -92,6 +92,7 @@
 					<useUIHarness>true</useUIHarness>
 					<useUIThread>true</useUIThread>
 					<argLine>-Xmx4g -Djava.awt.headless=false -Duser.language=en -Duser.country=US -Dorg.eclipse.swtbot.search.timeout=30000</argLine>
+          <forkedProcessTimeoutInSeconds>120</forkedProcessTimeoutInSeconds>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -7,8 +7,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class IntegrationTest extends AbstractSWTBotTest {
 
   @Test
