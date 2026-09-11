@@ -30,9 +30,9 @@ jobs:
         shell: bash
         run: |
           extract_version() {
-                    grep -Eo 'n=`[0-9]+\.[0-9]+\.[0-9]+`' "$1" \
-                      | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' \
-                      | head -1
+            grep -Eo '__name:`Plan`[^;]*;[^;]*;let t=e,n=`[0-9]+\.[0-9]+\.[0-9]+`' "$1" \
+              | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' \
+              | head -1
           }
 
           CURRENT=$(extract_version "$PEV2_FILE")
