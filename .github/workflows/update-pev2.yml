@@ -30,7 +30,7 @@ jobs:
         shell: bash
         run: |
           extract_version() {
-            grep -Eo '__name:`Plan`[^;]*;[^;]*;let t=e,n=`[0-9]+\.[0-9]+\.[0-9]+`' "$1" \
+            grep -Eo 'let t=e,n=`[0-9]+\.[0-9]+\.[0-9]+`' "$1" \
               | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' \
               | head -1
           }
