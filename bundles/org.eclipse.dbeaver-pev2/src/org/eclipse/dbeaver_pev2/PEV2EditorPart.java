@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -16,7 +17,6 @@ import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.BrowserFunction;
 import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.layout.FillLayout;
@@ -48,6 +48,8 @@ public class PEV2EditorPart extends MultiPageEditorPart {
   private volatile boolean pev2Loaded;
   private volatile boolean planLoaded;
 
+  private Supplier<String> fileChooser = this::chooseFile;
+
   @Override
   protected void createPages() {
     createBrowserPage();
@@ -76,34 +78,29 @@ public class PEV2EditorPart extends MultiPageEditorPart {
 
     browser = new Browser(container, SWT.NONE);
 
-    createTestHooks();
-
     browser.setUrl(fileUrl.toExternalForm());
-    browser.addProgressListener(ProgressListener.completedAdapter(e -> browser.execute("""
-        window.setPlanData('%s', `%s`, `%s`);
-        """.formatted(getEditorInput().getName(),
-        pev2Content.plan(),
-        pev2Content.sql()))));
+    // The script runs after the callback: WebKitGTK does not report its result from inside one
+    browser.addProgressListener(ProgressListener.completedAdapter(e -> browser.getDisplay().asyncExec(this::loadPlan)));
 
     int index = addPage(container);
     setPageText(index, "Plan");
   }
 
-  private void createTestHooks() {
-    new BrowserFunction(browser, "notifyPEV2Loaded") {
-      @Override
-      public Object function(Object[] arguments) {
-        pev2Loaded = true;
-        return null;
-      }
-    };
-    new BrowserFunction(browser, "notifyPlanLoaded") {
-      @Override
-      public Object function(Object[] arguments) {
-        planLoaded = true;
-        return null;
-      }
-    };
+  private void loadPlan() {
+    if (browser.isDisposed()) {
+      return;
+    }
+    // The page can be reported as loaded before PEV2 has started
+    pev2Loaded = Boolean.TRUE.equals(browser.evaluate("return typeof window.setPlanData === 'function';"));
+    if (!pev2Loaded) {
+      browser.getDisplay().timerExec(50, this::loadPlan);
+      return;
+    }
+    planLoaded = browser.execute("""
+        window.setPlanData('%s', `%s`, `%s`);
+        """.formatted(getEditorInput().getName(),
+        pev2Content.plan(),
+        pev2Content.sql()));
   }
 
   private void createSourcePage() {
@@ -134,15 +131,7 @@ public class PEV2EditorPart extends MultiPageEditorPart {
 
   @Override
   public void doSaveAs() {
-    Shell shell = getSite().getShell();
-
-    FileDialog dialog = new FileDialog(shell, SWT.SAVE);
-
-    dialog.setText("Save PEV2 file");
-    dialog.setFileName(getEditorInput().getName());
-    dialog.setFilterExtensions("*.pev2");
-
-    String filename = dialog.open();
+    String filename = fileChooser.get();
 
     if (filename == null) {
       return;
@@ -154,6 +143,25 @@ public class PEV2EditorPart extends MultiPageEditorPart {
     } catch (IOException e) {
       Activator.error(e);
     }
+  }
+
+  private String chooseFile() {
+    Shell shell = getSite().getShell();
+
+    FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+
+    dialog.setText("Save PEV2 file");
+    dialog.setFileName(getEditorInput().getName());
+    dialog.setFilterExtensions("*.pev2");
+
+    return dialog.open();
+  }
+
+  /**
+   * Replaces the native file dialog of {@link #doSaveAs()}, which SWTBot cannot drive.
+   */
+  public void setFileChooser(Supplier<String> fileChooser) {
+    this.fileChooser = fileChooser;
   }
 
   @Override
