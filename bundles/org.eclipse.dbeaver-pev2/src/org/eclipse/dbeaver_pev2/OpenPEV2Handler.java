@@ -33,12 +33,16 @@ import org.jkiss.dbeaver.utils.RuntimeUtils;
 
 public class OpenPEV2Handler extends AbstractHandler {
 
+  public static final String ANALYZE_PARAMETER = "org.eclipse.dbeaver-pev2.open.analyze";
+
   @Override
   public Object execute(ExecutionEvent executionEvent) throws ExecutionException {
     SQLEditor editor = RuntimeUtils.getObjectAdapter(HandlerUtil.getActiveEditor(executionEvent), SQLEditor.class);
     final SQLScriptElement scriptElement = editor.extractActiveQuery();
     if (scriptElement instanceof SQLQuery originalSqlQuery) {
-      String text = "EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT JSON) " + scriptElement.getText();
+      boolean analyze = !"false".equalsIgnoreCase(executionEvent.getParameter(ANALYZE_PARAMETER));
+      String options = analyze ? "ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT JSON" : "COSTS, VERBOSE, FORMAT JSON";
+      String text = "EXPLAIN (" + options + ") " + scriptElement.getText();
       originalSqlQuery.setText(text);
       originalSqlQuery.setOriginalText(text);
       SQLQuery sqlQuery = new SQLQuery(scriptElement.getDataSource(), originalSqlQuery.getOriginalText(), originalSqlQuery);
