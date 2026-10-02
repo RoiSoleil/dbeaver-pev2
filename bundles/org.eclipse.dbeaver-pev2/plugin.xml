@@ -6,6 +6,11 @@
       <command
             id="org.eclipse.dbeaver-pev2.open"
             name="Open explain plan in PEV2">
+         <commandParameter
+               id="org.eclipse.dbeaver-pev2.open.analyze"
+               name="Analyze"
+               optional="true">
+         </commandParameter>
       </command>
     </extension>
     <extension point="org.eclipse.core.expressions.propertyTesters">
@@ -18,12 +23,18 @@
    </extension>
    <extension point="org.eclipse.ui.menus">
       <menuContribution allPopups="false" locationURI="toolbar:org.jkiss.dbeaver.ui.editors.sql.toolbar.side.top?after=tools">
-          <command commandId="org.eclipse.dbeaver-pev2.open">
+          <command commandId="org.eclipse.dbeaver-pev2.open" id="org.eclipse.dbeaver-pev2.open.toolbar" style="pulldown">
               <visibleWhen checkEnabled="true">
                 <with variable="activeEditor">
                   <test property="org.eclipse.dbeaver-pev2.isPostgreDataSource" forcePluginActivation="true"/>
                 </with>
               </visibleWhen>
+          </command>
+      </menuContribution>
+      <menuContribution allPopups="false" locationURI="menu:org.eclipse.dbeaver-pev2.open.toolbar">
+          <command commandId="org.eclipse.dbeaver-pev2.open" label="Explain (ANALYZE)" style="push"/>
+          <command commandId="org.eclipse.dbeaver-pev2.open" label="Explain (without ANALYZE)" style="push">
+              <parameter name="org.eclipse.dbeaver-pev2.open.analyze" value="false"/>
           </command>
       </menuContribution>
    </extension>
