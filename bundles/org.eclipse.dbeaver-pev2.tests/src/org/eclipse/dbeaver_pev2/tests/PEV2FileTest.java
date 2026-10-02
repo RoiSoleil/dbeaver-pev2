@@ -4,7 +4,9 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.dbeaver_pev2.PEV2File;
 import org.eclipse.dbeaver_pev2.PEV2File.PEV2Content;
@@ -29,6 +31,12 @@ public class PEV2FileTest {
 
         assertEquals(sql, content.sql().trim());
         assertEquals(plan, content.plan().trim());
+    }
+
+    @Test
+    public void testReadWithoutSeparatorFails() {
+        InputStream is = new ByteArrayInputStream("SELECT 1".getBytes(StandardCharsets.UTF_8));
+        assertThrows(IOException.class, () -> PEV2File.read(is));
     }
 
 }
