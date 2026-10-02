@@ -32,8 +32,8 @@
           </command>
       </menuContribution>
       <menuContribution allPopups="false" locationURI="menu:org.eclipse.dbeaver-pev2.open.toolbar">
-          <command commandId="org.eclipse.dbeaver-pev2.open" label="Explain (ANALYZE)" style="push"/>
-          <command commandId="org.eclipse.dbeaver-pev2.open" label="Explain (without ANALYZE)" style="push">
+          <command commandId="org.eclipse.dbeaver-pev2.open" icon="icons/pev2.png" label="Explain (ANALYZE)" style="push"/>
+          <command commandId="org.eclipse.dbeaver-pev2.open" icon="icons/pev2.png" label="Explain (without ANALYZE)" style="push">
               <parameter name="org.eclipse.dbeaver-pev2.open.analyze" value="false"/>
           </command>
       </menuContribution>
