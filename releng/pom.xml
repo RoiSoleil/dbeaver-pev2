@@ -8,7 +8,7 @@
 	<properties>
 		<tycho.version>5.0.4</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jacoco.version>0.8.15</jacoco.version>
+		<jacoco.version>0.8.16</jacoco.version>
 		<eclipse-repo.url>https://download.eclipse.org/releases/latest</eclipse-repo.url>
 		<dbeaver-repo.url>https://dbeaver.io/update/latest</dbeaver-repo.url>
 		<target.file>${maven.multiModuleProjectDirectory}/releng/dbeaver-pev2.target</target.file>
